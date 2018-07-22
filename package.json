@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "npm rebuild node-sass",
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "test": "nyc mocha --timeout=3000 --exit",
     "lint": "eslint **/*.js"
   },
@@ -49,7 +49,7 @@
     "node-sass": "^4.9.2",
     "node-sass-middleware": "^0.11.0",
     "nodemailer": "^4.6.7",
-    "nodemon": "^1.17.5",
+    "nodemon": "^1.18.3",
     "openpay": "^1.0.2",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",

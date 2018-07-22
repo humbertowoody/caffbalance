@@ -2,22 +2,22 @@ extends ../layout
 
 block content
   .pb-2.mt-2.mb-4.border-bottom
-    h3 Sign up
+    h3 Registrarse
   form(id='signup-form', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Email
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Correo Electrónico
       .col-md-7
-        input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
+        input.form-control(type='email', name='email', id='email', placeholder='Correo Electrónico', autofocus, required)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='password') Password
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='password') Contraseña
       .col-md-7
-        input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+        input.form-control(type='password', name='password', id='password', placeholder='Contraseña', required)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='confirmPassword') Confirm Password
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='confirmPassword') Confirmar Contraseña
       .col-md-7
-        input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
+        input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirmar Contraseña', required)
     .form-group.offset-sm-3.col-md-7.pl-2
       button.btn.btn-success(type='submit')
         i.fas.fa-user-plus.fa-sm
-        | Signup
+        | Registrarse
