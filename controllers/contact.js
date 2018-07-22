@@ -29,10 +29,10 @@ exports.postContact = (req, res) => {
   let fromName;
   let fromEmail;
   if (!req.user) {
-    req.assert('name', 'Name cannot be blank').notEmpty();
-    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('name', 'El nombre es requerido').notEmpty();
+    req.assert('email', 'El correo electrónico no es válido').isEmail();
   }
-  req.assert('message', 'Message cannot be blank').notEmpty();
+  req.assert('message', 'El mensaje es requerido').notEmpty();
 
   const errors = req.validationErrors();
 
@@ -50,9 +50,9 @@ exports.postContact = (req, res) => {
   }
 
   const mailOptions = {
-    to: 'your@email.com',
+    to: 'humbertowoody@gmail.com',
     from: `${fromName} <${fromEmail}>`,
-    subject: 'Contact Form | Hackathon Starter',
+    subject: 'Formulario de Contacto | Caff Balance',
     text: req.body.message
   };
 
@@ -61,7 +61,7 @@ exports.postContact = (req, res) => {
       req.flash('errors', { msg: err.message });
       return res.redirect('/contact');
     }
-    req.flash('success', { msg: 'Email has been sent successfully!' });
+    req.flash('success', { msg: 'El mensaje ha sido enviado correctamente!' });
     res.redirect('/contact');
   });
 };

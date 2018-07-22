@@ -56,7 +56,7 @@ exports.postLogin = (req, res, next) => {
 exports.logout = (req, res) => {
   req.logout();
   req.session.destroy((err) => {
-    if (err) console.log('Error : Failed to destroy the session during logout.', err);
+    if (err) console.log('Error : No se pudo destruir la sesión.', err);
     req.user = null;
     res.redirect('/');
   });
@@ -80,9 +80,9 @@ exports.getSignup = (req, res) => {
  * Create a new local account.
  */
 exports.postSignup = (req, res, next) => {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+  req.assert('email', 'El Correo Electrónico no es válido').isEmail();
+  req.assert('password', 'La contraseña debe tener al menos 4 caracteres').len(4);
+  req.assert('confirmPassword', 'Las contraseñas no coinciden').equals(req.body.password);
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   const errors = req.validationErrors();
@@ -100,7 +100,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: req.body.email }, (err, existingUser) => {
     if (err) { return next(err); }
     if (existingUser) {
-      req.flash('errors', { msg: 'Account with that email address already exists.' });
+      req.flash('errors', { msg: 'Una cuenta con ese correo ya existe.' });
       return res.redirect('/signup');
     }
     user.save((err) => {
@@ -130,7 +130,7 @@ exports.getAccount = (req, res) => {
  * Update profile information.
  */
 exports.postUpdateProfile = (req, res, next) => {
-  req.assert('email', 'Please enter a valid email address.').isEmail();
+  req.assert('email', 'Porfavor ingresa un correo electrónico válido.').isEmail();
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   const errors = req.validationErrors();
@@ -150,12 +150,12 @@ exports.postUpdateProfile = (req, res, next) => {
     user.save((err) => {
       if (err) {
         if (err.code === 11000) {
-          req.flash('errors', { msg: 'The email address you have entered is already associated with an account.' });
+          req.flash('errors', { msg: 'El correo electrónico que ingresaste ya pertenece a otra cuenta.' });
           return res.redirect('/account');
         }
         return next(err);
       }
-      req.flash('success', { msg: 'Profile information has been updated.' });
+      req.flash('success', { msg: 'Tu información de perfil ha sido actualizada correctamente.' });
       res.redirect('/account');
     });
   });
@@ -166,8 +166,8 @@ exports.postUpdateProfile = (req, res, next) => {
  * Update current password.
  */
 exports.postUpdatePassword = (req, res, next) => {
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+  req.assert('password', 'La contraseña debe tener al menos 4 caracteres').len(4);
+  req.assert('confirmPassword', 'Las contraseñas no coinciden').equals(req.body.password);
 
   const errors = req.validationErrors();
 
@@ -181,7 +181,7 @@ exports.postUpdatePassword = (req, res, next) => {
     user.password = req.body.password;
     user.save((err) => {
       if (err) { return next(err); }
-      req.flash('success', { msg: 'Password has been changed.' });
+      req.flash('success', { msg: 'La contraseña ha sido actualizada.' });
       res.redirect('/account');
     });
   });
@@ -195,7 +195,7 @@ exports.postDeleteAccount = (req, res, next) => {
   User.remove({ _id: req.user.id }, (err) => {
     if (err) { return next(err); }
     req.logout();
-    req.flash('info', { msg: 'Your account has been deleted.' });
+    req.flash('info', { msg: 'Tu cuenta ha sido eliminada.' });
     res.redirect('/');
   });
 };
@@ -232,7 +232,7 @@ exports.getReset = (req, res, next) => {
     .exec((err, user) => {
       if (err) { return next(err); }
       if (!user) {
-        req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+        req.flash('errors', { msg: 'El token para restablecer la contraseña es inválido o a expirado.' });
         return res.redirect('/forgot');
       }
       res.render('account/reset', {
@@ -246,8 +246,8 @@ exports.getReset = (req, res, next) => {
  * Process the reset password request.
  */
 exports.postReset = (req, res, next) => {
-  req.assert('password', 'Password must be at least 4 characters long.').len(4);
-  req.assert('confirm', 'Passwords must match.').equals(req.body.password);
+  req.assert('password', 'La contraseña debe tener al menos 4 caracteres.').len(4);
+  req.assert('confirm', 'Las contraseñas deben coincidir.').equals(req.body.password);
 
   const errors = req.validationErrors();
 
@@ -262,7 +262,7 @@ exports.postReset = (req, res, next) => {
       .where('passwordResetExpires').gt(Date.now())
       .then((user) => {
         if (!user) {
-          req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+          req.flash('errors', { msg: 'El token para restablecer la contraseña es inválido o ha expirado.' });
           return res.redirect('back');
         }
         user.password = req.body.password;
@@ -287,13 +287,13 @@ exports.postReset = (req, res, next) => {
     });
     const mailOptions = {
       to: user.email,
-      from: 'hackathon@starter.com',
-      subject: 'Your Hackathon Starter password has been changed',
-      text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
+      from: 'noreply@caffbalance.com',
+      subject: 'Tu contraseña en Caff Balance ha sido cambiada',
+      text: `Hola,\n\n Esta es una confirmación de que la contraseña para la cuenta de ${user.email} ha sido cambiada exitosamente.\n`
     };
     return transporter.sendMail(mailOptions)
       .then(() => {
-        req.flash('success', { msg: 'Success! Your password has been changed.' });
+        req.flash('success', { msg: 'Éxito! La contraseña ha sido actualizada.' });
       });
   };
 
@@ -321,7 +321,7 @@ exports.getForgot = (req, res) => {
  * Create a random token, then the send user an email with a reset link.
  */
 exports.postForgot = (req, res, next) => {
-  req.assert('email', 'Please enter a valid email address.').isEmail();
+  req.assert('email', 'Porfavor, introduce una dirección válida de correo electrónico.').isEmail();
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   const errors = req.validationErrors();
@@ -339,7 +339,7 @@ exports.postForgot = (req, res, next) => {
       .findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          req.flash('errors', { msg: 'Account with that email address does not exist.' });
+          req.flash('errors', { msg: 'No existe ninguna cuenta asociada a ese correo electrónico.' });
         } else {
           user.passwordResetToken = token;
           user.passwordResetExpires = Date.now() + 3600000; // 1 hour
@@ -360,16 +360,17 @@ exports.postForgot = (req, res, next) => {
     });
     const mailOptions = {
       to: user.email,
-      from: 'hackathon@starter.com',
-      subject: 'Reset your password on Hackathon Starter',
-      text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
-        Please click on the following link, or paste this into your browser to complete the process:\n\n
+      from: 'noreply@caffbalance.com',
+      subject: 'Restablecer tu contraseña en Caff Balance',
+      text: `Estás recibiendo este correo electrónico porque tú (o alguien más) ha solicitado que se restablezca la contraseña de tu cuenta.\n\n
+        Porfavor haz click en el siguiente link, o pega el enlace en tu navegador para completar el proceso:\n\n
         http://${req.headers.host}/reset/${token}\n\n
-        If you did not request this, please ignore this email and your password will remain unchanged.\n`
+        Si tu NO solicitaste esto, porfavor ignora este mensaje y tu contraseña permanecerá intacta.\n\n
+        Saludos, Caff Balance.\n`
     };
     return transporter.sendMail(mailOptions)
       .then(() => {
-        req.flash('info', { msg: `An e-mail has been sent to ${user.email} with further instructions.` });
+        req.flash('info', { msg: `Un correo electrónico ha sido enviado a ${user.email} con instrucciones para seguir adelante.` });
       });
   };
 
