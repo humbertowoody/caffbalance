@@ -231,6 +231,16 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /**
+ * 404 Handler
+ */
+app.use((req, res, next) => {
+  res.status(404);
+
+  res.render('404');
+  return;
+});
+
+/**
  * Start Express server.
  */
 app.listen(app.get('port'), () => {
