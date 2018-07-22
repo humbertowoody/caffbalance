@@ -236,8 +236,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use((req, res, next) => {
   res.status(404);
 
-  res.render('404');
-  return;
+  res.render('404', { title: '404' });
 });
 
 /**

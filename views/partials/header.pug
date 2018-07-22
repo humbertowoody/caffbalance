@@ -14,6 +14,10 @@
           a.nav-link(href='/api') Acerca De
         li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
           a.nav-link(href='/contact') Contacto
+        if user
+          if user.type !== 'ADMIN'
+            li.nav-item(class=(title === 'Routine') ? 'active' : undefined)
+              a.nav-link(href='/routine') Rutina del Día
       ul.nav.navbar-nav.ml-auto
         if !user
           li.nav-item(class=(title === 'Login') ? 'active' : undefined)
@@ -21,8 +25,6 @@
           li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
             a.nav-link(href='/signup') Registrarse
         else
-          li.nav-item(class=(title === 'Routine') ? 'active' : undefined)
-            a.nav-link(href='/routine') Rutina del Día
           li.dropdown(class=(title === 'Account Management') ? 'active' : undefined).nav-item
             a.dropdown-toggle.nav-link(href='#', data-toggle='dropdown')
               if user.profile.picture
@@ -34,8 +36,24 @@
             ul.dropdown-menu
               li.dropdown-item
                 a(href='/account') Mi Cuenta
-              li.dropdown-item
-                a(href='/billing') Información Bancaria
+              if user.type !== 'ADMIN'
+                li.dropdown-item
+                  a(href='/billing') Información Bancaria
               li.divider.dropdown-item
               li.dropdown-item
                 a(href='/logout') Cerrar Sesión
+          if user.type === 'ADMIN'
+            li.dropdown(class=(title === 'Admin') ? 'active' : undefined).nav-item
+              a.dropdown-toggle.nav-link(href='#', data-toggle='dropdown')
+                span Administración
+                i.caret
+              ul.dropdown-menu
+                li.dropdown-item
+                  a(href='/videos') Administración de Videos
+                li.dropdown-item
+                  a(href='/routines') Administración de Rutinas
+                li.divider.dropdown-item
+                li.dropdown-item
+                  a(href='/clients') Administración de Clientes
+                li.dropdown-item
+                  a(href='/sales') Administración de Ventas
