@@ -4,7 +4,34 @@ block content
   h1 Caff Balance
   p.lead Entrenar para tener resultados nunca fue tan fácil.
   hr
-  .row
+  #carouselExampleIndicators.carousel.slide(data-ride='carousel')
+    ol.carousel-indicators
+      li.active(data-target='#carouselExampleIndicators', data-slide-to='0')
+      li(data-target='#carouselExampleIndicators', data-slide-to='1')
+      li(data-target='#carouselExampleIndicators', data-slide-to='2')
+    .carousel-inner
+      .carousel-item.active
+        img.d-block.w-100(src='http://placehold.it/600x300', alt='First slide')
+        .carousel-caption.d-none.d-md-block
+          h3 Primer Imágen
+          p Texto llegador de primer slide, algo cautivador.
+      .carousel-item
+        img.d-block.w-100(src='http://placehold.it/600x300', alt='Second slide')
+        .carousel-caption.d-none.d-md-block
+          h3 Segunda imágen
+          p Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quae ab corporis veritatis consequuntur iusto ex neque alias repellendus accusantium maxime at odit, nisi fugit nulla provident voluptatibus libero? Pariatur, ab!
+      .carousel-item
+        img.d-block.w-100(src='http://placehold.it/600x300', alt='Third slide')
+        .carousel-caption.d-none.d-md-block
+          h3 Tercer imágen
+          p Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus possimus dignissimos laboriosam explicabo cumque neque odit asperiores nam natus voluptas, eaque voluptate dolor dolorem odio, libero, impedit perspiciatis exercitationem corporis.
+    a.carousel-control-prev(href='#carouselExampleIndicators', role='button', data-slide='prev')
+      span.carousel-control-prev-icon(aria-hidden='true')
+      span.sr-only Previous
+    a.carousel-control-next(href='#carouselExampleIndicators', role='button', data-slide='next')
+      span.carousel-control-next-icon(aria-hidden='true')
+      span.sr-only Next
+  .row.mt-2
     .col-md-6
       h2 Esfuerzo
       p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
@@ -26,3 +53,17 @@ block content
       p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
       p
         a.btn.btn-raised(href='#', role='button') View details »
+  hr
+  .row.text-center
+    .col-md-4
+      h3 Opinión 1
+      p Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo delectus facilis optio dicta iste hic vero ratione vel? Reprehenderit voluptate similique quod necessitatibus ad ipsa unde non minima delectus sequi?
+    .col-md-4
+      h3 Opinión 2
+      p Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo delectus facilis optio dicta iste hic vero ratione vel? Reprehenderit voluptate similique quod necessitatibus ad ipsa unde non minima delectus sequi?
+    .col-md-4
+      h3 Opinión 3
+      p Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo delectus facilis optio dicta iste hic vero ratione vel? Reprehenderit voluptate similique quod necessitatibus ad ipsa unde non minima delectus sequi?
+  hr
+  .row
+    a.btn.btn-info.btn-lg.mx-auto(href="/signup") ¡Comienza Ahora!
