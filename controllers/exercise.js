@@ -46,14 +46,11 @@ module.exports.storeExercise = (req, res, next) => {
   if (!(req.files['video.mp4'] && req.files['video.webm'] && req.files['video.ogg'])) {
     errors.push({ msg: 'Los videos del ejercicio son necesarios' });
   }
-  console.log('Errores: ', errors);
 
   if (errors.length > 0) {
     req.flash('errors', errors);
     return res.redirect('/exercises/create');
   }
-
-  console.log('Archivos: ', req.files);
 
   return Exercise.findOne({ title: req.body.title })
     .exec()
@@ -81,4 +78,58 @@ module.exports.storeExercise = (req, res, next) => {
 };
 
 // PUT /exercises/:id/update
-module.exports.updateExercise = (req, res) => {};
+module.exports.updateExercise = (req, res, next) => {
+  // Validation
+  req.assert('title', 'El título es obligatorio').notEmpty();
+  req.assert('description', 'La descripción es obligatoria').notEmpty();
+
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors);
+    return res.redirect('/exercises/create');
+  }
+  const update = req.body;
+
+  if (req.files['video.mp4']) {
+    update.video.mp4 = req.files['video.mp4'][0].filename;
+  }
+
+  if (req.files['video.webm']) {
+    update.video.webm = req.files['video.webm'][0].filename;
+  }
+
+  if (req.files['video.ogg']) {
+    update.video.ogg = req.files['video.ogg'][0].filename;
+  }
+
+  return Exercise.findByIdAndUpdate(req.params.id, update, { new: true })
+    .exec()
+    .then((exercise) => {
+      if (!exercise) {
+        req.flash('errors', { msg: 'El ejercicio no existe' });
+        return res.redirect('/exercises');
+      }
+      req.flash('success', { msg: '¡Ejercicio correctamente actualizado!' });
+      return res.redirect('/exercises');
+    })
+    .catch(err => next(err));
+};
+
+/**
+ * GET /exercises/:id/delete
+ * Delete an exercise from storage
+ */
+module.exports.deleteExercise = (req, res, next) => {
+  Exercise.findByIdAndRemove(req.params.id)
+    .exec()
+    .then((exercise) => {
+      if (!exercise) {
+        req.flash('errors', { msg: 'El ejercicio no existe' });
+      } else {
+        req.flash('success', { msg: '¡El ejercicio fue eliminado correctamente!' });
+      }
+      return res.redirect('/exercises');
+    })
+    .catch(err => next(err));
+};

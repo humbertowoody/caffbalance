@@ -185,14 +185,14 @@ app.post('/exercises/store',
   ]),
   exerciseController.storeExercise);
 app.get('/exercises/:id/edit', exerciseController.editExercise);
-app.put('/exercises/:id/update',
+app.post('/exercises/:id/update',
   upload.fields([
     { name: 'video.mp4', maxCount: 1 },
     { name: 'video.webm', maxCount: 1 },
     { name: 'video.ogg', maxCount: 1 },
   ]),
   exerciseController.updateExercise);
-app.get('/exercises/:id/delete');
+app.get('/exercises/:id/delete', exerciseController.deleteExercise);
 
 /**
  * API examples routes.
