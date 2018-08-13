@@ -33,9 +33,10 @@ dotenv.load({ path: '.env' });
  */
 const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
-//const apiController = require('./controllers/api');
+// const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const aboutController = require('./controllers/about');
+const routineController = require('./controllers/routine');
 
 /**
  * API keys and Passport configuration.
@@ -103,14 +104,14 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
-  if (!req.user &&
-    req.path !== '/login' &&
-    req.path !== '/signup' &&
-    !req.path.match(/^\/auth/) &&
-    !req.path.match(/\./)) {
+  if (!req.user
+    && req.path !== '/login'
+    && req.path !== '/signup'
+    && !req.path.match(/^\/auth/)
+    && !req.path.match(/\./)) {
     req.session.returnTo = req.originalUrl;
-  } else if (req.user &&
-    (req.path === '/account' || req.path.match(/^\/api/))) {
+  } else if (req.user
+    && (req.path === '/account' || req.path.match(/^\/api/))) {
     req.session.returnTo = req.originalUrl;
   }
   next();
@@ -142,6 +143,11 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 app.get('/about', aboutController.getAbout);
+app.get('/routine', routineController.todayRoutine);
+
+/**
+ * Videos
+ */
 
 /**
  * API examples routes.
