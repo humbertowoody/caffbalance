@@ -3,18 +3,28 @@ extends ../layout
 block content
   link(rel="stylesheet", href="https://vjs.zencdn.net/7.1.0/video-js.css")
   script(src="https://vjs.zencdn.net/7.1.0/video.js")
-  h1 Rutina del día
-  p.lead Esta es la rutina del día de hoy
+  h1=routine.title
+  p.lead=routine.description
   hr
   .row
     .col-md-12.text-center(oncontextmenu="return false;", onselectstart="return false;", ondragstart="return false;")
       video(id="routine-video", class="video-js vjs-big-play-centered", controls, preload="auto",  data-setup="{fluid: true}", style="width: 100%;")
-        source(src="https://vjs.zencdn.net/v/oceans.mp4", type="video/mp4")
+        source(src=routine.exercises[index].video.mp4, type="video/mp4")
+        source(src=routine.exercises[index].video.webm, type="video/webm")
+        source(src=routine.exercises[index].video.ogg, type="video/ogg")
         p.vjs-no-js
-          | To view this video please enable JavaScript, and consider upgrading to a web browser that
-          a(href="https://videojs.com/html5-video-support/") supports HTML5 video
+          | Para ver este video es necesario contar con JavaScript, y considera actualizar tu navegador a uno que
+          a(href="https://videojs.com/html5-video-support/") soporte video en HTML5.
   .row.my-2
     .col
-      a.btn.btn-block.btn-dark(href="/") Anterior
+      if index-1 < 0
+        a.btn.btn-block.btn-dark.disabled(href="#") Anterior
+      else
+        a.btn.btn-block.btn-dark(href=`/routine/${index-1}`) Anterior
     .col
-      a.btn.btn-block.btn-dark(href="/") Siguiente
+      h4.text-center=`(${index+1}/${routine.exercises.length})`
+    .col
+      if index+1 < routine.exercises.length
+        a.btn.btn-block.btn-dark(href=`/routine/${index+1}`) Siguiente
+      else
+        a.btn.btn-block.btn-dark.disabled(href="#") Siguiente

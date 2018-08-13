@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const exerciseSchema = new mongoose.Schema({
-  name: String,
+  title: String,
   description: String,
   video: {
     mp4: String,

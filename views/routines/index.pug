@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h1 Rutinas
+  p.lead Estas son todas las rutinas registradas en el sistema
+  a.btn.btn-success(href="/routines/create") Añadir Rutina
+  hr
+  if routines.length <= 0
+    h3 No hay rutinas registradas aún :(
+  else
+    .card-deck
+      each routine in routines
+        .card
+          .card-body
+            h5.card-title=routine.title
+            p.card-text=routine.description
+          .card-footer
+            p= 'Última actualización: ' + routine.updated_at
+

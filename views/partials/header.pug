@@ -15,9 +15,8 @@
         li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
           a.nav-link(href='/contact') Contacto
         if user
-          if user.type !== 'ADMIN'
-            li.nav-item(class=(title === 'Routine') ? 'active' : undefined)
-              a.nav-link(href='/routine') Rutina del Día
+          li.nav-item(class=(title === 'Routine') ? 'active' : undefined)
+            a.nav-link(href='/routine/0') Rutina del Día
       ul.nav.navbar-nav.ml-auto
         if !user
           li.nav-item(class=(title === 'Login') ? 'active' : undefined)
@@ -49,11 +48,11 @@
                 i.caret
               ul.dropdown-menu
                 li.dropdown-item
-                  a(href='/videos') Administración de Videos
+                  a(href='/exercises') Ejercicios
                 li.dropdown-item
-                  a(href='/routines') Administración de Rutinas
+                  a(href='/routines') Rutinas
                 li.divider.dropdown-item
                 li.dropdown-item
-                  a(href='/clients') Administración de Clientes
+                  a(href='/clients') Clientes
                 li.dropdown-item
-                  a(href='/sales') Administración de Ventas
+                  a(href='/sales') Ventas

@@ -20,8 +20,21 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
 const figlet = require('figlet');
+const crypto = require('crypto');
+const mime = require('mime');
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    crypto.pseudoRandomBytes(16, (err, raw) => {
+      cb(null, `${raw.toString('hex')}${Date.now()}.${mime.getExtension(file.mimetype)}`);
+    });
+  }
+});
+
+const upload = multer({ storage });
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -37,6 +50,7 @@ const userController = require('./controllers/user');
 const contactController = require('./controllers/contact');
 const aboutController = require('./controllers/about');
 const routineController = require('./controllers/routine');
+const exerciseController = require('./controllers/exercise');
 
 /**
  * API keys and Passport configuration.
@@ -89,7 +103,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
+  if (req.path === '/exercises/store' || req.path.endsWith('/update')) {
     next();
   } else {
     lusca.csrf()(req, res, next);
@@ -117,6 +131,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/dist'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist'), { maxAge: 31557600000 }));
@@ -143,11 +158,41 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 app.get('/about', aboutController.getAbout);
-app.get('/routine', routineController.todayRoutine);
+app.get('/routine/:index', routineController.todayRoutine);
 
 /**
- * Videos
+ * Routines CRUD
  */
+app.get('/routines', routineController.getRoutines);
+app.get('/routines/:id');
+app.get('/routines/create');
+app.post('/routines/store');
+app.get('/routines/:id/edit');
+app.put('/routines/:id/update');
+app.delete('/routines/:id/delete');
+
+/**
+ * Exercises CRUD
+ */
+app.get('/exercises', exerciseController.getExercises);
+app.get('/exercises/:id');
+app.get('/exercises/create', exerciseController.createExercise);
+app.post('/exercises/store',
+  upload.fields([
+    { name: 'video.mp4', maxCount: 1 },
+    { name: 'video.webm', maxCount: 1 },
+    { name: 'video.ogg', maxCount: 1 },
+  ]),
+  exerciseController.storeExercise);
+app.get('/exercises/:id/edit', exerciseController.editExercise);
+app.put('/exercises/:id/update',
+  upload.fields([
+    { name: 'video.mp4', maxCount: 1 },
+    { name: 'video.webm', maxCount: 1 },
+    { name: 'video.ogg', maxCount: 1 },
+  ]),
+  exerciseController.updateExercise);
+app.get('/exercises/:id/delete');
 
 /**
  * API examples routes.

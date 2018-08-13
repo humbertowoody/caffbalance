@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  h1 Editar Ejercicio
+  p.lead Aquí puedes editar el ejercicio
+    =' "'+exercise.title+'"'
+  a.btn.btn-info(href="/exercises") Regresar
+  hr
+  form(action=`/exercises/${exercise._id}/update`, method='PUT', enctype='multipart/form-data', onsubmit='return confirm("¿Estás segur@ de la información que ingressate?");')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='title') Título del Ejercicio
+      .col-md-7
+        input.form-control(type='text', name='title', id='title', required=true, value=exercise.title)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='description') Descripción del Ejercicio
+      .col-md-7
+        textarea.form-control(name='description', id='description', required=true)=exercise.description
+    .row
+      .col-md-3
+        h3 Videos
+        p Nota: Sólamente selecciona un archivo si deseas reemplazar el video ya registrado,
+          | en caso contrario puedes dejar los campos en blanco.
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='video.mp4') Video en formato MP4
+      .col-md-7
+        input.form-control#videoMP4(type="file", name="video.mp4", required=true, value=exercise.video.mp4)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='video.webm') Video en formato WEBM
+      .col-md-7
+        input.form-control#videoWEBM(type="file", name="video.webm")
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='video.ogg') Video en formato OGG
+      .col-md-7
+        input.form-control#videoOGG(type="file", name="video.ogg")
+    .form-group
+      .offset-sm-3.col-md-7.pl-2
+        button.btn.btn-primary(type='submit')
+          i.fas.fa-save.fa-sm
+          | Guardar Ejercicio
