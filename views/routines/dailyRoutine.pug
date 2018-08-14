@@ -9,9 +9,9 @@ block content
   .row
     .col-md-12.text-center(oncontextmenu="return false;", onselectstart="return false;", ondragstart="return false;")
       video(id="routine-video", class="video-js vjs-big-play-centered", controls, preload="auto",  data-setup="{fluid: true}", style="width: 100%;")
-        source(src=routine.exercises[index].video.mp4, type="video/mp4")
-        source(src=routine.exercises[index].video.webm, type="video/webm")
-        source(src=routine.exercises[index].video.ogg, type="video/ogg")
+        source(src='/uploads/'+routine.exercises[index].video.mp4, type="video/mp4")
+        source(src='/uploads/'+routine.exercises[index].video.webm, type="video/webm")
+        source(src='/uploads/'+routine.exercises[index].video.ogg, type="video/ogg")
         p.vjs-no-js
           | Para ver este video es necesario contar con JavaScript, y considera actualizar tu navegador a uno que
           a(href="https://videojs.com/html5-video-support/") soporte video en HTML5.
