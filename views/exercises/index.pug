@@ -8,16 +8,15 @@ block content
   if exercises.length <= 0
     h3 No hay ejercicios registrados aún :(
   else
-    .card-deck
+    .row
       each exercise, i in exercises
-        if i%4 === 0
-          .row
-        .card
-          .card-body
-            h5.card-title=exercise.title
-            p.card-text=exercise.description
-            a.mx-2.btn.btn-primary(href=`/exercises/${exercise._id}`) Ver
-            a.mx-2.btn.btn-info(href=`/exercises/${exercise._id}/edit`) Editar
-            a.mx-2.btn.btn-danger(href=`/exercises/${exercise._id}/delete`, onclick="return confirm('¿En verdad desea eliminar este ejercicio?');") Eliminar
-          .card-footer
-            p= 'Última actualización: ' + exercise.updated_at
+        .col-md-3.mb-2
+          .card.text-center.h-100
+            .card-body
+              h5.card-title=exercise.title
+              p.card-text=exercise.description
+              a.btn.btn-primary(href=`/exercises/${exercise._id}`) Ver
+              a.btn.btn-info(href=`/exercises/${exercise._id}/edit`) Editar
+              a.btn.btn-danger(href=`/exercises/${exercise._id}/delete`, onclick="return confirm('¿En verdad desea eliminar este ejercicio?');") Eliminar
+            .card-footer
+              p= 'Última actualización: ' + exercise.updated_at

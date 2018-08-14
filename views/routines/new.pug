@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  h1 Añadir una nueva Rutina
+  p.lead En esta página puedes agendar una nueva Rutina
+  a.btn.btn-info(href="/routines") Regresar
+  hr
+  form(action='/routines/store', method='POST', onsubmit='return confirm("¿Estás segur@ de la información que ingresaste?");')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='title') Título de la Rutina
+      .col-md-7
+        input.form-control(type='text', name='title', id='title', required=true)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='description') Descripción de la Rutina
+      .col-md-7
+        textarea.form-control(name='description', id='description', required=true)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold(for='day') Fecha de la Rutina
+      .col-md-7
+        input.form-control(type="date", name='day', id='day', required=true)
+    .row
+      .col-md-3
+        h3 Ejercicios
+        p Selecciona los ejercicios que desees incluir en la Rutina.
+    each exercise, i in exercises
+      .form-check
+        input.form-check-input(type="checkbox", value=exercise._id, name="exercises[]", id=`exercise${i}`)
+        label.form-check-label(for=`exercise${i}`)=exercise.title
+          small=` (${exercise.description})`
+    else
+      .text-center
+        h4 No hay ejercicios registrados (¡Aún!)
+        a.btn.btn-info(href="/exercises")
+          i.fas.fa-plus.fa-sm
+          | Puedes añadir uno aquí
+    .form-group
+      .offset-sm-3.col-md-7.pl-2
+        button.btn.btn-primary(type='submit')
+          i.fas.fa-plus.fa-sm
+          | Añadir Rutina

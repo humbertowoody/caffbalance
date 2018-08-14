@@ -165,11 +165,11 @@ app.get('/routine/:index', routineController.todayRoutine);
  */
 app.get('/routines', routineController.getRoutines);
 app.get('/routines/:id');
-app.get('/routines/create');
-app.post('/routines/store');
-app.get('/routines/:id/edit');
-app.put('/routines/:id/update');
-app.delete('/routines/:id/delete');
+app.get('/routines/create', routineController.createRoutine);
+app.post('/routines/store', routineController.storeRoutine);
+app.get('/routines/:id/edit', routineController.editRoutine);
+app.put('/routines/:id/update', routineController.updateRoutine);
+app.get('/routines/:id/delete', routineController.deleteRoutine);
 
 /**
  * Exercises CRUD

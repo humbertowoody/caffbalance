@@ -8,12 +8,15 @@ block content
   if routines.length <= 0
     h3 No hay rutinas registradas aún :(
   else
-    .card-deck
-      each routine in routines
-        .card
-          .card-body
-            h5.card-title=routine.title
-            p.card-text=routine.description
-          .card-footer
-            p= 'Última actualización: ' + routine.updated_at
-
+    .row
+      each routine, i in routines
+        .col-md-3.mb-2
+          .card.h-100.text-center
+            .card-body
+              h5.card-title=routine.title
+              p.card-text=routine.description
+              a.btn.btn-primary(href=`/routines/${routine._id}`) Ver
+              a.btn.btn-info(href=`/routines/${routine._id}/edit`) Editar
+              a.btn.btn-danger(href=`/routines/${routine._id}/delete`, onclick="return confirm('¿En verdad desea eliminar esta rutina?');") Eliminar
+            .card-footer
+              p= 'Programada para: ' + routine.day.toLocaleDateString()
