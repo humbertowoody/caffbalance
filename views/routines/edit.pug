@@ -7,7 +7,7 @@ block content
     = routine.title+'"'
   a.btn.btn-info(href="/routines") Regresar
   hr
-  form(action='/routines/store', method='POST', onsubmit='return confirm("¿Estás segur@ de la información que ingresaste?");')
+  form(action=`/routines/${routine._id}/update`, method='POST', onsubmit='return confirm("¿Estás segur@ de la información que ingresaste?");')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='title') Título de la Rutina
@@ -25,9 +25,10 @@ block content
       .col-md-3
         h3 Ejercicios
         p Selecciona los ejercicios que desees incluir en la Rutina.
+    - let ejercicios = routine.exercises.map(val => val._id.toString())
     each exercise, i in exercises
       .form-check
-        input.form-check-input(type="checkbox", value=exercise._id, name="exercises[]", id=`exercise${i}`)
+        input.form-check-input(type="checkbox", value=exercise._id, name="exercises[]", id=`exercise${i}`, checked=(ejercicios.includes(exercise._id.toString())))
         label.form-check-label(for=`exercise${i}`)=exercise.title
           small=` (${exercise.description})`
     else

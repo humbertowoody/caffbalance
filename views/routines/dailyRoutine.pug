@@ -16,15 +16,19 @@ block content
           | Para ver este video es necesario contar con JavaScript, y considera actualizar tu navegador a uno que
           a(href="https://videojs.com/html5-video-support/") soporte video en HTML5.
   .row.my-2
+    .col.text-center
+      h3=routine.exercises[index].title
+      p=routine.exercises[index].description
+  .row.my-2
     .col
       if index-1 < 0
         a.btn.btn-block.btn-dark.disabled(href="#") Anterior
       else
         a.btn.btn-block.btn-dark(href=`/routine/${index-1}`) Anterior
     .col
-      h4.text-center=`(${index+1}/${routine.exercises.length})`
+      h4.text-center=`(${Number(index)+1}/${routine.exercises.length})`
     .col
       if index+1 < routine.exercises.length
-        a.btn.btn-block.btn-dark(href=`/routine/${index+1}`) Siguiente
+        a.btn.btn-block.btn-dark(href=`/routine/${Number(index)+1}`) Siguiente
       else
-        a.btn.btn-block.btn-dark.disabled(href="#") Siguiente
+        a.btn.btn-block.btn-success(href="/") ¡Finalizar Rutina!

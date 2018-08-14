@@ -168,7 +168,7 @@ app.get('/routines/:id');
 app.get('/routines/create', routineController.createRoutine);
 app.post('/routines/store', routineController.storeRoutine);
 app.get('/routines/:id/edit', routineController.editRoutine);
-app.put('/routines/:id/update', routineController.updateRoutine);
+app.post('/routines/:id/update', routineController.updateRoutine);
 app.get('/routines/:id/delete', routineController.deleteRoutine);
 
 /**

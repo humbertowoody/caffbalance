@@ -8,9 +8,9 @@ const Exercise = require('../models/Exercise');
  */
 module.exports.todayRoutine = (req, res, next) => Routine
   .findOne({
-    date: {
-      $gte: moment().startOf('day'),
-      $lt: moment().endOf('day'),
+    day: {
+      $gte: moment().startOf('day').toDate(),
+      $lte: moment().endOf('day').toDate(),
     }
   })
   .populate('exercises')
@@ -20,7 +20,9 @@ module.exports.todayRoutine = (req, res, next) => Routine
       req.flash('errors', { msg: 'No hay ninguna rutina programada aún para el día de hoy, intenta de nuevo más tarde' });
       return res.redirect('/');
     }
-    if (routine.exercises && (req.params.index < 0 || req.params.index >= routine.exercises.length)) {
+    if (routine.exercises
+        && (req.params.index < 0 || req.params.index >= routine.exercises.length)
+    ) {
       req.flash('errors', 'Lo sentimos, ese ejercicio no existe');
       return res.redirect('/routine/0');
     }
@@ -78,9 +80,9 @@ module.exports.storeRoutine = (req, res, next) => {
   }
 
   return Routine.findOne({
-    date: {
+    day: {
       $gte: moment(req.body.day).startOf('day'),
-      $lt: moment(req.body.day).endOf('day'),
+      $lte: moment(req.body.day).endOf('day'),
     }
   }).exec()
     .then((routine) => {
@@ -125,7 +127,46 @@ module.exports.editRoutine = (req, res, next) => Routine.findById(req.params.id)
  * PUT /routines/:id/update
  * Update a resource in storage
  */
-module.exports.updateRoutine = (req, res, next) => {};
+module.exports.updateRoutine = (req, res, next) => {
+  // Validation
+  req.assert('title', 'El título de la rutina es necesario').notEmpty();
+  req.assert('description', 'La descripción de la rutina es necesaria').notEmpty();
+  req.assert('day', 'La fecha de la rutina es necesaria').notEmpty();
+
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors);
+    return res.redirect('/routines/create');
+  }
+
+  return Routine.findOne({
+    day: {
+      $gte: moment(req.body.day).startOf('day'),
+      $lte: moment(req.body.day).endOf('day'),
+    },
+    _id: { $ne: req.params.id },
+  }).exec()
+    .then((routine) => {
+      if (routine) {
+        req.flash('errors', { msg: 'La fecha que seleccionaste ya se encuentra ocupada, selecciona otra distinta.' });
+        return res.redirect(`/routines/${req.params.id}/edit`);
+      }
+      req.body.day = moment(req.body.day).startOf('day').format();
+      Routine.findByIdAndUpdate(req.params.id, req.body)
+        .exec()
+        .then((routine) => {
+          if (!routine) {
+            req.flash('errors', { msg: 'La rutina no existe' });
+            return res.redirect('/routines');
+          }
+          req.flash('success', { msg: '¡La rutina ha sido actualizada correctamente!' });
+          return res.redirect('/routines');
+        })
+        .catch((err) => { throw err; });
+    })
+    .catch(err => next(err));
+};
 
 /**
  * GET /routines/:id/delete
