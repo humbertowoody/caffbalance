@@ -71,6 +71,10 @@ mongoose.connection.on('error', (err) => {
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
   process.exit();
 });
+mongoose.connection.on('connected', () => {
+  console.log('%s MongoDB connection success.', chalk.green('✓'));
+  console.log('MongoDB URI: ', process.env.MONGODB_URI);
+});
 
 /**
  * Express configuration.
