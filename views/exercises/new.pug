@@ -10,26 +10,26 @@ block content
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='title') Título del Ejercicio
       .col-md-7
-        input.form-control(type='text', name='title', id='title', required)
+        input.form-control(type='text', name='title', id='title', required, placeholder="Sentadilla")
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='description') Descripción del Ejercicio
       .col-md-7
-        textarea.form-control(name='description', id='description', required)
+        textarea.form-control(name='description', id='description', required, placeholder="La Sentadilla es un ejercicio a realizar con mucho cuidado...")
     .row
       .col-md-3
         h3 Videos
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold(for='video.mp4') Video en formato MP4
+      label.col-md-3.col-form-label.font-weight-bold(for='video.mp4') Liga del video en formato MP4
       .col-md-7
-        input.form-control(type="url", name="video.mp4", id="video.mp4" required)
+        input.form-control(type="url", name="video.mp4", id="video.mp4" required, placeholder="Liga de Amazon S3...")
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold(for='video.webm') Video en formato WEBM
+      label.col-md-3.col-form-label.font-weight-bold(for='video.webm') Liga del video en formato WEBM
       .col-md-7
-        input.form-control(type="url", name="video.webm", id="video.webm")
+        input.form-control(type="url", name="video.webm", id="video.webm", placeholder="Liga de Amazon S3...")
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold(for='video.ogg') Video en formato OGG
+      label.col-md-3.col-form-label.font-weight-bold(for='video.ogg') Liga del video en formato OGG
       .col-md-7
-        input.form-control(type="url", name="video.ogg", id="video.webm")
+        input.form-control(type="url", name="video.ogg", id="video.webm", placeholder="Liga de Amazon S3...")
     .form-group
       .offset-sm-3.col-md-7.pl-2
         button.btn.btn-primary(type='submit')
