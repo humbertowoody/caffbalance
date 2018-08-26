@@ -15,7 +15,7 @@ block content
             .card-body
               h5.card-title=routine.title
               p.card-text=routine.description
-              a.btn.btn-primary(href=`/routines/${routine._id}`) Ver
+              a.btn.btn-primary(href=`/routines/${routine._id}/0`) Ver
               a.btn.btn-info(href=`/routines/${routine._id}/edit`) Editar
               a.btn.btn-danger(href=`/routines/${routine._id}/delete`, onclick="return confirm('¿En verdad desea eliminar esta rutina?');") Eliminar
             .card-footer

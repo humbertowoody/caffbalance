@@ -164,7 +164,7 @@ app.get('/routine/:index', routineController.todayRoutine);
  * Routines CRUD
  */
 app.get('/routines', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.getRoutines);
-app.get('/routines/:id');
+app.get('/routines/:id/:index', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.getRoutine);
 app.get('/routines/create', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.createRoutine);
 app.post('/routines/store', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.storeRoutine);
 app.get('/routines/:id/edit', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.editRoutine);

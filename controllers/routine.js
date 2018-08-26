@@ -49,6 +49,34 @@ module.exports.getRoutines = (req, res, next) => {
 };
 
 /**
+ * GET /routines/:id
+ * Show a preview of a specific routine.
+ */
+module.exports.getRoutine = (req, res, next) => {
+  Routine.findById(req.params.id)
+    .populate('exercises')
+    .exec()
+    .then((routine) => {
+      if (!routine) {
+        req.flash('errors', { msg: 'La rutina que buscas no existe.' });
+        return res.redirect('/routines');
+      }
+      if (routine.exercises
+        && (req.params.index < 0 || req.params.index >= routine.exercises.length)
+      ) {
+        req.flash('errors', 'Lo sentimos, ese ejercicio no está registrado para la rutina actual.');
+        return res.redirect(`/routines/${routine._id}/0`);
+      }
+      return res.render('routines/show', {
+        title: 'Rutinas',
+        routine,
+        index: req.params.index,
+      });
+    })
+    .catch(err => next(err));
+};
+
+/**
  * GET /routines/create
  * Show the form for creating a new Routine
  */
