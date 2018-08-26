@@ -5,31 +5,31 @@ block content
   p.lead En esta página puedes añadir un nuevo ejercicio al sistema
   a.btn.btn-info(href="/exercises") Regresar
   hr
-  form(action='/exercises/store', method='POST', enctype='multipart/form-data', onsubmit='return confirm("¿Estás segur@ de la información que ingressate?");')
+  form(action='/exercises/store', method='POST', onsubmit='return confirm("¿Estás segur@ de la información que ingressate?");')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='title') Título del Ejercicio
       .col-md-7
-        input.form-control(type='text', name='title', id='title', required=true)
+        input.form-control(type='text', name='title', id='title', required)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='description') Descripción del Ejercicio
       .col-md-7
-        textarea.form-control(name='description', id='description', required=true)
+        textarea.form-control(name='description', id='description', required)
     .row
       .col-md-3
         h3 Videos
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='video.mp4') Video en formato MP4
       .col-md-7
-        input.form-control#videoMP4(type="file", name="video.mp4", required=true)
+        input.form-control(type="url", name="video.mp4", id="video.mp4" required)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='video.webm') Video en formato WEBM
       .col-md-7
-        input.form-control#videoWEBM(type="file", name="video.webm")
+        input.form-control(type="url", name="video.webm", id="video.webm")
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold(for='video.ogg') Video en formato OGG
       .col-md-7
-        input.form-control#videoOGG(type="file", name="video.ogg")
+        input.form-control(type="url", name="video.ogg", id="video.webm")
     .form-group
       .offset-sm-3.col-md-7.pl-2
         button.btn.btn-primary(type='submit')

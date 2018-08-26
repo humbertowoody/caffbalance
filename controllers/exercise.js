@@ -9,6 +9,26 @@ module.exports.getExercises = (req, res, next) => Exercise.find({})
   }))
   .catch(err => next(err));
 
+/**
+ * GET /exercises/:id
+ * Show a specific exercise.
+ */
+module.exports.showExercise = (req, res, next) => {
+  Exercise.findById(req.params.id)
+    .exec()
+    .then((exercise) => {
+      if (!exercise) {
+        req.flash('errors', { msg: 'El ejercicio que deseas no existe.' });
+        return res.redirect('/exercises');
+      }
+      return res.render('exercises/show', {
+        title: 'Ejercicios',
+        exercise,
+      });
+    })
+    .catch(err => next(err));
+};
+
 // GET /exercises/:id/edit
 module.exports.editExercise = (req, res, next) => Exercise
   .findById(req.params.id)
@@ -40,14 +60,11 @@ module.exports.storeExercise = (req, res, next) => {
   // Validation
   req.assert('title', 'El título es obligatorio').notEmpty();
   req.assert('description', 'La descripción es obligatoria').notEmpty();
+  req.assert('video.mp4', 'La liga del video en formato MP4 es requerida').notEmpty();
 
-  const errors = req.validationErrors() ? req.validationErrors() : [];
+  const errors = req.validationErrors();
 
-  if (!(req.files['video.mp4'] && req.files['video.webm'] && req.files['video.ogg'])) {
-    errors.push({ msg: 'Los videos del ejercicio son necesarios' });
-  }
-
-  if (errors.length > 0) {
+  if (errors) {
     req.flash('errors', errors);
     return res.redirect('/exercises/create');
   }
@@ -56,15 +73,7 @@ module.exports.storeExercise = (req, res, next) => {
     .exec()
     .then((exercise) => {
       if (!exercise) {
-        const newExercise = new Exercise({
-          title: req.body.title,
-          description: req.body.description,
-          video: {
-            mp4: req.files['video.mp4'][0].filename,
-            webm: req.files['video.webm'][0].filename,
-            ogg: req.files['video.ogg'][0].filename,
-          },
-        });
+        const newExercise = new Exercise(req.body);
         return newExercise.save((err) => {
           if (err) { next(err); }
           req.flash('success', { msg: '¡Ejercicio guardado correctamente!' });
@@ -89,21 +98,8 @@ module.exports.updateExercise = (req, res, next) => {
     req.flash('errors', errors);
     return res.redirect('/exercises/create');
   }
-  const update = req.body;
 
-  if (req.files['video.mp4']) {
-    update.video.mp4 = req.files['video.mp4'][0].filename;
-  }
-
-  if (req.files['video.webm']) {
-    update.video.webm = req.files['video.webm'][0].filename;
-  }
-
-  if (req.files['video.ogg']) {
-    update.video.ogg = req.files['video.ogg'][0].filename;
-  }
-
-  return Exercise.findByIdAndUpdate(req.params.id, update, { new: true })
+  return Exercise.findByIdAndUpdate(req.params.id, req.body)
     .exec()
     .then((exercise) => {
       if (!exercise) {

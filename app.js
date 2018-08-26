@@ -163,36 +163,24 @@ app.get('/routine/:index', routineController.todayRoutine);
 /**
  * Routines CRUD
  */
-app.get('/routines', routineController.getRoutines);
+app.get('/routines', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.getRoutines);
 app.get('/routines/:id');
-app.get('/routines/create', routineController.createRoutine);
-app.post('/routines/store', routineController.storeRoutine);
-app.get('/routines/:id/edit', routineController.editRoutine);
-app.post('/routines/:id/update', routineController.updateRoutine);
-app.get('/routines/:id/delete', routineController.deleteRoutine);
+app.get('/routines/create', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.createRoutine);
+app.post('/routines/store', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.storeRoutine);
+app.get('/routines/:id/edit', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.editRoutine);
+app.post('/routines/:id/update', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.updateRoutine);
+app.get('/routines/:id/delete', passportConfig.isAuthenticated, passportConfig.isAdmin, routineController.deleteRoutine);
 
 /**
  * Exercises CRUD
  */
-app.get('/exercises', exerciseController.getExercises);
-app.get('/exercises/:id');
-app.get('/exercises/create', exerciseController.createExercise);
-app.post('/exercises/store',
-  upload.fields([
-    { name: 'video.mp4', maxCount: 1 },
-    { name: 'video.webm', maxCount: 1 },
-    { name: 'video.ogg', maxCount: 1 },
-  ]),
-  exerciseController.storeExercise);
-app.get('/exercises/:id/edit', exerciseController.editExercise);
-app.post('/exercises/:id/update',
-  upload.fields([
-    { name: 'video.mp4', maxCount: 1 },
-    { name: 'video.webm', maxCount: 1 },
-    { name: 'video.ogg', maxCount: 1 },
-  ]),
-  exerciseController.updateExercise);
-app.get('/exercises/:id/delete', exerciseController.deleteExercise);
+app.get('/exercises', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.getExercises);
+app.get('/exercises/create', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.createExercise);
+app.post('/exercises/store', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.storeExercise);
+app.get('/exercises/:id', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.showExercise);
+app.get('/exercises/:id/edit', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.editExercise);
+app.post('/exercises/:id/update', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.updateExercise);
+app.get('/exercises/:id/delete', passportConfig.isAuthenticated, passportConfig.isAdmin, exerciseController.deleteExercise);
 
 /**
  * API examples routes.

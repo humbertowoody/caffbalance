@@ -551,3 +551,15 @@ exports.isAuthorized = (req, res, next) => {
     res.redirect(`/auth/${provider}`);
   }
 };
+
+/**
+ * Admin Required middleware.
+ */
+exports.isAdmin = (req, res, next) => {
+  if (req.user.type === 'ADMIN') {
+    next();
+  } else {
+    req.flash('errors', { msg: 'Lo sentimos, esa página solo está disponible para Administradores.' });
+    res.redirect('/');
+  }
+};
