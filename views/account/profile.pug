@@ -9,11 +9,15 @@ block content
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Correo Electrónico
       .col-md-7
-        input.form-control(type='email', name='email', id='email', value=user.email)
+        input.form-control(type='email', name='email', id='email', value=user.email, required)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Nombre
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='fname') Nombre(s)
       .col-md-7
-        input.form-control(type='text', name='name', id='name', value=user.profile.name)
+        input.form-control(type='text', name='fname', id='fname', value=user.profile.fname, required)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='lname') Apellido(s)
+      .col-md-7
+        input.form-control(type='text', name='lname', id='lname', value=user.profile.lname)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Género
       .col-sm-6
@@ -28,6 +32,9 @@ block content
           span  Otro
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Gravatar
+        p.text-muted (Si deseas cambiar esta imágen, visita
+          a(href="https://es.gravatar.com/", target='_blank')  Gravatar.com
+          |  y asegurate de usar el mismo correo que registraste en la aplicación)
       .col-sm-4
         img(src=user.gravatar(), class='profile', width='100', height='100')
     .form-group
