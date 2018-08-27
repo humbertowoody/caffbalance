@@ -14,8 +14,14 @@ const userSchema = new mongoose.Schema({
   },
 
   profile: {
-    name: String,
+    fname: String,
+    lname: String,
     gender: String,
+  },
+
+  payment: {
+    customerId: String,
+    cardId: String,
   }
 }, { timestamps: true });
 
