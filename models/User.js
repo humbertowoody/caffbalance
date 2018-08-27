@@ -17,12 +17,20 @@ const userSchema = new mongoose.Schema({
     fname: String,
     lname: String,
     gender: String,
+    phone: String,
+  },
+
+  address: {
+    city: String,
+    state: String,
+    line1: String,
+    postalCode: String,
   },
 
   payment: {
     customerId: String,
-    cardId: String,
-  }
+    subscriptionId: String,
+  },
 }, { timestamps: true });
 
 /**

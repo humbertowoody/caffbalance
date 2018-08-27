@@ -1,0 +1,68 @@
+extends ../layout
+
+block content
+  script(type='text/javascript', src='https://openpay.s3.amazonaws.com/openpay.v1.min.js')
+  script(type='text/javascript', src='https://openpay.s3.amazonaws.com/openpay-data.v1.min.js')
+  script(type='text/javascript').
+    $(document).ready(function() {
+      OpenPay.setId('#{appId}');
+      OpenPay.setApiKey('#{appPK}');
+      OpenPay.setSandboxMode(true);
+
+      //Se genera el id de dispositivo
+      var deviceSessionId = OpenPay.deviceData.setup("payment-form", "deviceId");
+
+      $('#pay-button').on('click', function(event) {
+        event.preventDefault();
+        $("#pay-button").prop( "disabled", true);
+        OpenPay.token.extractFormAndCreate('payment-form', sucess_callbak, error_callbak);
+      });
+
+      var sucess_callbak = function(response) {
+        var token_id = response.data.id;
+        $('#token_id').val(token_id);
+        $('#payment-form').submit();
+      };
+
+      var error_callbak = function(response) {
+        var desc = response.data.description != undefined ? response.data.description : response.message;
+        alert("Error: " + desc);
+        $("#pay-button").prop("disabled", false);
+      };
+    });
+
+  form#payment-form(action='/process-payment', method='POST')
+    h4.mb-3 Información de pago
+    input#token_id(type='hidden', name='token_id')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .row
+      .col-md-6.mb-3
+        label(for='cc-name') Nombre del Titular
+        input#cc-name.form-control(type='text', required, data-openpay-card='holder_name')
+        small.text-muted Nombre completo como aparece en la tarjeta.
+        .invalid-feedback
+          | El nombre del titular es requerido.
+      .col-md-6.mb-3
+        label(for='cc-number') Número de la Tarjeta
+        input#cc-number.form-control(type='text', required, data-openpay-card='card_number')
+        .invalid-feedback
+          | El número de la tarjeta es requerido.
+    .row
+      .col-md-3.mb-3
+        label(for='cc-expiration') Mes de Expiración
+        input#cc-expiration.form-control(type='number', step='1', min='1', max='12', required, data-openpay-card='expiration_month')
+        .invalid-feedback
+          | Mes de expiración de la tarjeta requerido.
+      .col-md-3.mb-3
+        label(for='cc-expiration') Año de Expiración
+        input#cc-expiration.form-control(type='number', step='1', min='0', max='99', required, data-openpay-card='expiration_year')
+        .invalid-feedback
+          | Año de expiración de la tarjeta requerido.
+      .col-md-3.mb-3
+        label(for='cc-cvv') Código de Seguridad CVV (al reverso de la tarjeta)
+        input#cc-cvv.form-control(type='text', required, data-openpay-card='cvv2')
+        .invalid-feedback
+          | Código de Seguridad requerido
+    hr.mb-4
+    button#pay-button.btn.btn-primary.btn-lg.btn-block(type='submit') Añadir Método de Pago
+

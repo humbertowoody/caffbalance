@@ -1,0 +1,45 @@
+extends ../layout
+
+block content
+  if subscription
+    h3 Datos de la Subscripción
+    hr
+    .row
+      p.col-md-3.font-weight-bold.text-right Estado de la Subscripción:
+      .col-md-7
+        case subscription.status
+          when 'trial'
+            | En prueba sin cobrar (restan: #{moment(subscription.trial_end_date).diff(moment(), 'days')} días).
+          when 'active'
+            | Subscripción Activa.
+          when 'past-due'
+            | No se ha podido realizar el cargo, se intentará de nuevo.
+          when 'unpaid'
+            | No se ha podido realizar el cargo, el servicio ha sido suspendido.
+          default
+            | La subscripción se encuentra cancelada.
+    .row
+      p.col-md-3.text-right No. de Tarjeta:
+      p.col-md-7=subscription.card.card_number
+    .row
+      p.col-md-3.text-right Fecha de Expiración:
+      p.col-md-7
+        =subscription.card.expiration_month
+        | /
+        =subscription.card.expiration_year
+    .row
+      p.col-md-3.text-right Fecha de próximo cargo:
+      p.col-md-7=moment(subscription.charge_date).format('ll')
+    .row
+      p.col-md-3.text-right Ciclo de Facturación:
+      p.col-md-7
+        =moment(subscription.period_end_date).subtract(1, 'months').format('ll')
+        |  -
+        =' '+moment(subscription.period_end_date).format('ll')
+    .offset-sm-3.col-md-7.pl-2
+      a.btn.btn-info(href="/add-payment") Actualizar Método de Pago
+  else
+    h4 Aún no tienes una subscripción :(
+    hr
+    p Si deseas adquirir una, puedes comenzar por añadir un método de pago.
+    a.btn.btn-info(href="/add-payment") Añadir Método de Pago

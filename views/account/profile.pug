@@ -6,6 +6,7 @@ block content
 
   form(action='/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
+    h5.col-md-3.text-right Datos Generales
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Correo Electrónico
       .col-md-7
@@ -19,6 +20,10 @@ block content
       .col-md-7
         input.form-control(type='text', name='lname', id='lname', value=user.profile.lname)
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='phone') Teléfono
+      .col-md-7
+        input.form-control(type='text', name='phone', id='phone', value=user.profile.phone, required)
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Género
       .col-sm-6
         label.radio.col-sm-3
@@ -30,6 +35,24 @@ block content
         label.radio.col-sm-3
           input(type='radio', checked=user.profile.gender=='other', name='gender', value='other', data-toggle='radio')
           span  Otro
+    h5.col-md-3.text-right Dirección
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='city') Ciudad
+      .col-md-7
+        input.form-control(type='text', name='city', id='city', value=user.address.city, required)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='state') Estado
+      .col-md-7
+        input.form-control(type='text', name='state', id='state', value=user.address.state, required)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='line1') Calle y Número
+      .col-md-7
+        input.form-control(type='text', name='line1', id='line1', value=user.address.line1, required)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='postalCode') Código Postal
+      .col-md-7
+        input.form-control(type='text', name='postalCode', id='postalCode', value=user.address.postalCode, required)
+    h5.col-md-3.text-right Foto de Perfil
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Gravatar
         p.text-muted (Si deseas cambiar esta imágen, visita

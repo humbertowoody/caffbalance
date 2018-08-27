@@ -58,6 +58,11 @@ const exerciseController = require('./controllers/exercise');
 const passportConfig = require('./config/passport');
 
 /**
+ * Payments and Subscriptions configuration.
+ */
+const openPayConfig = require('./config/openpay');
+
+/**
  * Create Express server.
  */
 const app = express();
@@ -75,6 +80,12 @@ mongoose.connection.on('connected', () => {
   console.log('%s MongoDB connection success.', chalk.green('✓'));
   console.log('MongoDB URI: ', process.env.MONGODB_URI);
 });
+
+
+/**
+ * Bundling librarries to pug.
+ */
+app.locals.moment = require('moment');
 
 /**
  * Express configuration.
@@ -162,7 +173,15 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 app.get('/about', aboutController.getAbout);
-app.get('/routine/:index', routineController.todayRoutine);
+app.get('/routine/:index', passportConfig.isAuthenticated, openPayConfig.subscriptionActive, routineController.todayRoutine);
+
+/**
+ * Billing.
+ */
+app.get('/billing', passportConfig.isAuthenticated, userController.getBilling);
+app.get('/add-payment', passportConfig.isAuthenticated, userController.getAddPayment);
+app.post('/process-payment', passportConfig.isAuthenticated, userController.postPayment);
+app.get('/cancel-subscription', passportConfig.isAuthenticated, userController.deleteSubscription);
 
 /**
  * Routines CRUD

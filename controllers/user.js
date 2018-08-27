@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const passport = require('passport');
+const openPayConfig = require('../config/openpay');
 const User = require('../models/User');
 
 const randomBytesAsync = promisify(crypto.randomBytes);
@@ -131,6 +132,14 @@ exports.getAccount = (req, res) => {
  */
 exports.postUpdateProfile = (req, res, next) => {
   req.assert('email', 'Porfavor ingresa un correo electrónico válido.').isEmail();
+  req.assert('fname', 'Porfavor introduce tu(s) nombre(s').notEmpty();
+  req.assert('lname', 'Porfavor introduce tu(s) apellido(s)').notEmpty();
+  req.assert('phone', 'Porfavor introduce tu teléfono').notEmpty();
+  req.assert('city', 'Porfavor introduce una ciudad').notEmpty();
+  req.assert('state', 'Porfavor introduce un estado').notEmpty();
+  req.assert('line1', 'Porfavor introduce tu calle y número').notEmpty();
+  req.assert('postalCode', 'Porfavor introduce tu código postal').notEmpty();
+
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   const errors = req.validationErrors();
@@ -143,10 +152,14 @@ exports.postUpdateProfile = (req, res, next) => {
   User.findById(req.user.id, (err, user) => {
     if (err) { return next(err); }
     user.email = req.body.email || '';
-    user.profile.name = req.body.name || '';
+    user.profile.fname = req.body.fname || '';
+    user.profile.lname = req.body.lname || '';
     user.profile.gender = req.body.gender || '';
-    user.profile.location = req.body.location || '';
-    user.profile.website = req.body.website || '';
+    user.profile.phone = req.body.phone || '';
+    user.address.city = req.body.city || '';
+    user.address.state = req.body.state || '';
+    user.address.line1 = req.body.line1 || '';
+    user.address.postalCode = req.body.postalCode || '';
     user.save((err) => {
       if (err) {
         if (err.code === 11000) {
@@ -155,8 +168,29 @@ exports.postUpdateProfile = (req, res, next) => {
         }
         return next(err);
       }
-      req.flash('success', { msg: 'Tu información de perfil ha sido actualizada correctamente.' });
-      res.redirect('/account');
+      openPayConfig.updateClient(user, (err, body) => {
+        if (err) {
+          if (err.msg) {
+            openPayConfig.addClient(user, (nErr, id) => {
+              if (!nErr) {
+                user.payment.customerId = id;
+                user.save((err) => {
+                  if (err) {
+                    next(err);
+                  }
+                  req.flash('success', { msg: 'Tu información ha sido actualizada' });
+                  return res.redirect('/account');
+                });
+              }
+            });
+          }
+          req.flash('errors', { msg: 'Ha ocurrido un error actualizando tus datos con nuestro servidor de pagos. Intenta de nuevo.' });
+          return res.redirect('/account');
+        }
+        console.log('[CaffBalance] Client Updated Successfully on OpenPay: ', body);
+        req.flash('success', { msg: 'Tu información de perfil ha sido actualizada correctamente.' });
+        res.redirect('/account');
+      });
     });
   });
 };
@@ -366,7 +400,7 @@ exports.postForgot = (req, res, next) => {
         Porfavor haz click en el siguiente link, o pega el enlace en tu navegador para completar el proceso:\n\n
         http://${req.headers.host}/reset/${token}\n\n
         Si tu NO solicitaste esto, porfavor ignora este mensaje y tu contraseña permanecerá intacta.\n\n
-        Saludos, Caff Balance.\n`
+        Saludos,\nCaff Balance.\n`
     };
     return transporter.sendMail(mailOptions)
       .then(() => {
@@ -379,4 +413,80 @@ exports.postForgot = (req, res, next) => {
     .then(sendForgotPasswordEmail)
     .then(() => res.redirect('/forgot'))
     .catch(next);
+};
+
+/**
+ * GET /billing
+ * Billing page with payments info.
+ */
+exports.getBilling = (req, res, next) => {
+  openPayConfig.getSubcription(req.user, (err, subscription) => {
+    if (err) {
+      req.flash('errors', { msg: err.description ? err.description : 'Ha ocurrido un error obteniendo datos del servidor bancario' });
+    }
+    res.render('account/billing', {
+      title: 'Pagos',
+      user: req.user,
+      subscription,
+    });
+  });
+};
+
+/**
+ * GET /add-payment
+ * Get the add payment page.
+ */
+exports.getAddPayment = (req, res) => {
+  res.render('account/addPayment', {
+    title: 'Agregar Pago',
+    appId: process.env.OPENPAY_MERCHANT_ID || '',
+    appPK: process.env.OPENPAY_PUBLIC_KEY || '',
+  });
+};
+
+/**
+ * POST /process-payment
+ * Process the payment data.
+ */
+exports.postPayment = (req, res, next) => {
+  // Validation
+  req.assert('deviceId').notEmpty();
+  req.assert('token_id').notEmpty();
+
+  const errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', { msg: 'Ha ocurrido un error. Intenta de nuevo más tarde.' });
+    return res.redirect('/add-payment');
+  }
+
+  openPayConfig.addSubscription(req.user, req.body.token_id, (err, subscription) => {
+    if (err) {
+      req.flash('errors', { msg: err.description ? err.description : 'Ha ocurrido un error procesando tu pago, intenta de nuevo.' });
+      return res.redirect('/add-payment');
+    }
+    req.user.payment.subscriptionId = subscription.id;
+    req.user.save((err) => {
+      if (err) {
+        next(err);
+      }
+      req.flash('success', { msg: '¡Todo en orden! Ahora puedes comenzar a usar Caff Balance' });
+      return res.redirect('/');
+    });
+  });
+};
+
+
+/**
+ * GET /delete-subscription
+ */
+exports.deleteSubscription = (req, res, next) => {
+  openPayConfig.deleteSuscription(req.user, (err) => {
+    if (err) {
+      req.flash('errors', { msg: 'Ha ocurrido un problema cancelando la subscripción. Intenta de nuevo más tarde' });
+    } else {
+      req.flash('success', { msg: 'Se ha cancelado tu subscripción correctamente, te vamos a extrañar' });
+    }
+    return res.redirect('/billing');
+  });
 };
